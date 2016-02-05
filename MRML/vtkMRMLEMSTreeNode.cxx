@@ -4,7 +4,7 @@
 #include <vtkObjectFactory.h>
 #include <iterator>
 
-#include <vtksys/ios/sstream>
+#include <sstream>
 #include "vtkMRMLEMSTreeParametersNode.h"
 #include "vtkMRMLEMSTreeParametersParentNode.h"
 #include "vtkMRMLEMSTreeParametersLeafNode.h"
@@ -108,7 +108,7 @@ void vtkMRMLEMSTreeNode::WriteXML(ostream& of, int nIndent)
      << "\" ";
 
     {
-    vtksys_stl::stringstream ss;
+    std::stringstream ss;
     ss << this->ColorRGB[0] << " " 
        << this->ColorRGB[1] << " " 
        << this->ColorRGB[2];
@@ -116,9 +116,9 @@ void vtkMRMLEMSTreeNode::WriteXML(ostream& of, int nIndent)
     }
     
   of << indent << "InputChannelWeights=\"";
-  vtksys_stl::copy(this->InputChannelWeights.begin(),
+  std::copy(this->InputChannelWeights.begin(),
                    this->InputChannelWeights.end(),
-                   vtksys_stl::ostream_iterator<double>(of, " "));
+                   std::ostream_iterator<double>(of, " "));
   of << "\" ";
   
   of << indent << "SpatialPriorVolumeName=\"" 
@@ -252,9 +252,9 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "ChildNodeIDs"))
       {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
-      vtksys_stl::string currentID;
+      std::string currentID;
       while (ss >> currentID)
         {
         this->AddChildNode(currentID.c_str());
@@ -272,7 +272,7 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "ColorRGB"))
       {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
       for (unsigned int i = 0; i < 3; ++i)
         {
@@ -286,10 +286,10 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
     else if (!strcmp(key, "InputChannelWeights"))
       {
       // read data into a temporary vector
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
       double d;
-      vtksys_stl::vector<double> tmpVec;
+      std::vector<double> tmpVec;
       while (ss >> d)
         {
         tmpVec.push_back(d);
@@ -302,7 +302,7 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
         }
       
       // copy data
-      vtksys_stl::copy(tmpVec.begin(), tmpVec.end(), 
+      std::copy(tmpVec.begin(), tmpVec.end(), 
                        this->InputChannelWeights.begin());
       }
     else if (!strcmp(key, "SpatialPriorVolumeName"))
@@ -311,25 +311,25 @@ void vtkMRMLEMSTreeNode::ReadXMLAttributes(const char** attrs)
       }
     else if (!strcmp(key, "SpatialPriorWeight"))
       {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
       ss >> this->SpatialPriorWeight;
       }
     else if (!strcmp(key, "ClassProbability"))
       {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
       ss >> this->ClassProbability;
       }
     else if (!strcmp(key, "ExcludeFromIncompleteEStep"))
       {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
       ss >> this->ExcludeFromIncompleteEStep;
       }
     else if (!strcmp(key, "PrintWeights"))
       {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
       ss << val;
       ss >> this->PrintWeights;
       }
@@ -398,9 +398,9 @@ void vtkMRMLEMSTreeNode::PrintSelf(ostream& os, vtkIndent indent)
      << this->ColorRGB[0] << this->ColorRGB[1] << this->ColorRGB[2] << "\n";
 
   os << indent << "InputChannelWeights: ";
-  vtksys_stl::copy(this->InputChannelWeights.begin(),
+  std::copy(this->InputChannelWeights.begin(),
                    this->InputChannelWeights.end(),
-                   vtksys_stl::ostream_iterator<double>(os, " "));
+                   std::ostream_iterator<double>(os, " "));
   os << "\n";
 
   os << indent << "SpatialPriorVolumeName: " 
@@ -534,7 +534,7 @@ SetNumberOfTargetInputChannels(unsigned int n)
       
     // resize InputChannelWeights, don't preserve data!
     this->InputChannelWeights.resize(n);
-    vtksys_stl::fill(this->InputChannelWeights.begin(), 
+    std::fill(this->InputChannelWeights.begin(), 
                      this->InputChannelWeights.end(), 1.0);
 
     if (this->GetLeafParametersNode() != NULL)
